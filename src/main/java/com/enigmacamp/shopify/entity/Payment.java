@@ -17,12 +17,12 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-//    @Column(name = "redirect_url", nullable = false)
-//    @Value("${URL_MIDTRANS}")
-//    private String redirectUrl;
+    @Column(name = "redirect_url", nullable = false)
+    @Value("${URL_MIDTRANS}")
+    private String redirectUrl;
 
-//    @Column(nullable = false)
-//    private String method;
+    @Column(nullable = false)
+    private String method;
 
     @Column(nullable = false)
     private Long totalPayments;

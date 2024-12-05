@@ -20,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -31,6 +30,8 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final ProductService productService;
     private final CustomerService customerService;
+
+    AtomicReference<Long> totalPayment = new AtomicReference<>(0L);
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -58,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
 //        TODO: 4. Create Data Transaction
         transaction = transactionRepository.save(transaction);
 
-        AtomicReference<Long> totalPayment = new AtomicReference<>(0L);
+
 
         // TODO: 5. Update stock, Create total payment, insert Transaction detail
 
@@ -116,24 +117,64 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
     }
 
+    @Override
+    public void delete(String id) {
+//        TODO: Get Transaction id
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Transaction not found"));
+//        TODO: Delete Transaction
+        transactionRepository.delete(transaction);
+    }
 
+    @Override
+    public TransactionResponse getById(String id) {
+//        TODO: Get Transaction id
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Transaction not found"));
+//        TODO: Show Response Data Transaction
+        return toTransactionResponse(transaction);
+    }
 
-    private Payment createPayment(Transaction transaction) {
-        Long totalPayment = transaction.getTransactionDetails()
-                        .stream().mapToLong(TransactionDetail::getTotalPrice)
-                .sum();
-
-        Payment payment = Payment.builder()
-                .id(UUID.randomUUID().toString())
-                .totalPayments(totalPayment)
-                .transaction(transaction)
-                .build();
-
-        if (transaction.getPayment() == null) {
-            transaction.setPayment(payment);
-        }else {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already exists");
+    @Override
+    public List<TransactionResponse> getAll() {
+//        TODO: Get All Transaction
+        if (transactionRepository.findAll().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Transaction not found");
         }
-        return payment;
+//        TODO: Show All Data Transaction
+        return transactionRepository.findAll().stream()
+                .map(this::toTransactionResponse)
+                .toList();
+    }
+
+
+//    private Payment createPayment(Transaction transaction) {
+//        Long totalPayment = transaction.getTransactionDetails()
+//                        .stream().mapToLong(TransactionDetail::getTotalPrice)
+//                .sum();
+//
+//        Payment payment = Payment.builder()
+//                .id(UUID.randomUUID().toString())
+//                .totalPayments(totalPayment)
+//                .transaction(transaction)
+//                .build();
+//
+//        if (transaction.getPayment() == null) {
+//            transaction.setPayment(payment);
+//        }else {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Payment already exists");
+//        }
+//        return payment;
+//    }
+
+//    TODO: Return Data Transaction
+    public TransactionResponse toTransactionResponse(Transaction transaction) {
+        return TransactionResponse.builder()
+                .id(transaction.getId())
+                .customer(transaction.getCustomer())
+                .transactionDate(transaction.getTransactionDate())
+                .transactionDetails(transaction.getTransactionDetails())
+                .totalPayment(totalPayment.get())
+                .build();
     }
 }

@@ -95,7 +95,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse updateStock(ProductRequest request) {
+    public void updateStock(ProductRequest request) {
         validatorService.validate(request);
 
         Product product = productRepository.findById(request.getId())
@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setStock(request.getStock());
         productRepository.save(product);
-        return toProductResponse(product);
+        toProductResponse(product);
     }
 
     @Override
