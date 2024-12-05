@@ -47,11 +47,23 @@ public class TransactionServiceImpl implements TransactionService {
                 .email(response.getEmail())
                 .phone(response.getPhone())
                 .address(response.getAddress())
+                .createAt(response.getCreatedAt())
                 .build();
+
+//        TODO: 3. Prepare Data Transaction
+        Transaction transaction = Transaction.builder()
+                .customer(customer)
+                .transactionDate(Date.from(Instant.now()))
+                .build();
+//        TODO: 4. Create Data Transaction
+        transaction = transactionRepository.save(transaction);
 
         AtomicReference<Long> totalPayment = new AtomicReference<>(0L);
 
-        // TODO: 3 Update stock, Create total payment, insert Transaction detail
+        // TODO: 5. Update stock, Create total payment, insert Transaction detail
+
+//        TODO: Generate Transaction for Transaction Detail
+        Transaction finalTransaction = transaction;
         List<TransactionDetail> transactionDetails = request.getTransactionDetailRequests().stream()
                 .map(detail -> {
 
@@ -74,9 +86,11 @@ public class TransactionServiceImpl implements TransactionService {
                             .name(productResponse.getName())
                             .price(productResponse.getPrice())
                             .stock(stock)
+                            .createAt(productResponse.getCreated())
                             .build();
 
                     TransactionDetail transactionDetail = TransactionDetail.builder()
+                            .transaction(finalTransaction)
                             .product(product)
                             .quantity(detail.getQuantity())
                             .totalPrice(product.getPrice() * detail.getQuantity())
@@ -90,14 +104,8 @@ public class TransactionServiceImpl implements TransactionService {
                     return transactionDetail;
                 }).toList();
 
-//        TODO: 4. Data Transaction
-        Transaction transaction = Transaction.builder()
-                .customer(customer)
-                .transactionDetails(transactionDetails)
-                .transactionDate(Date.from(Instant.now()))
-                .build();
-//        TODO: 5. Create Data Transaction
-        transactionRepository.save(transaction);
+//        TODO: Generate Transaction Detail for Transaction
+        transaction.setTransactionDetails(transactionDetails);
 
         return TransactionResponse.builder()
                 .id(transaction.getId())

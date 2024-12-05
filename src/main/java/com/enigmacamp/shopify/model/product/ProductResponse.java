@@ -3,6 +3,8 @@ package com.enigmacamp.shopify.model.product;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Builder
 public class ProductResponse {
@@ -10,4 +12,5 @@ public class ProductResponse {
     private String name;
     private Long price;
     private Integer stock;
+    private Date created;
 }
