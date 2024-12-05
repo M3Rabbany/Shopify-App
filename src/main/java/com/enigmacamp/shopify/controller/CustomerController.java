@@ -71,4 +71,15 @@ public class CustomerController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(customers);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<CustomerResponse>> getCustomer(@PathVariable String id) {
+        CustomerResponse response = customerService.getCustomerById(id);
+
+        return ResponseEntity.ok(CommonResponse.<CustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Customer found")
+                .data(response)
+                .build());
+    }
 }

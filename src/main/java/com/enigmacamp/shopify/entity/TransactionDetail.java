@@ -2,6 +2,7 @@ package com.enigmacamp.shopify.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "transaction_details")
+@Builder
 public class TransactionDetail {
 
     @Id

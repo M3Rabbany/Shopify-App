@@ -1,16 +1,20 @@
 package com.enigmacamp.shopify.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(name = "t_transaction")
 public class Transaction {
 
@@ -30,7 +34,12 @@ public class Transaction {
     )
     private List<TransactionDetail> transactionDetails;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "transaction_date", updatable = false)
+    private Date transactionDate;
+
     @OneToOne
     @JoinColumn(name = "payment_id")
+    @JsonManagedReference
     private Payment payment;
 }

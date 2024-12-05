@@ -1,14 +1,15 @@
 package com.enigmacamp.shopify.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Table(name = "m_payment")
 public class Payment {
 
@@ -16,12 +17,17 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "redirect_url", nullable = false)
-    private String redirectUrl;
+//    @Column(name = "redirect_url", nullable = false)
+//    @Value("${URL_MIDTRANS}")
+//    private String redirectUrl;
+
+//    @Column(nullable = false)
+//    private String method;
 
     @Column(nullable = false)
-    private String method;
+    private Long totalPayments;
 
     @OneToOne(mappedBy = "payment")
+    @JsonBackReference
     private Transaction transaction;
 }

@@ -1,13 +1,10 @@
 package com.enigmacamp.shopify.service.impl;
 
 import com.enigmacamp.shopify.entity.Product;
-import com.enigmacamp.shopify.exception.ValidationException;
 import com.enigmacamp.shopify.model.product.ProductRequest;
 import com.enigmacamp.shopify.model.product.ProductResponse;
 import com.enigmacamp.shopify.repository.ProductRepository;
 import com.enigmacamp.shopify.service.ProductService;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,33 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final Validator validator;
+    private final ValidatorService validatorService;
 
     @Override
     @Transactional
-    public ProductResponse create(ProductRequest payload) {
+    public ProductResponse create(ProductRequest request) {
+        validatorService.validate(request);
 
-        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(payload);
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations.iterator().next().getMessage(), null);
-        }
-
-        if (productRepository.existsByName(payload.getName())) {
+        if (productRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Product already exists");
         }
 
         Product product = new Product();
         product.setId(UUID.randomUUID().toString());
-        product.setName(payload.getName());
-        product.setPrice(payload.getPrice());
-        product.setStock(payload.getStock());
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
         productRepository.save(product);
 
         return toProductResponse(product);
@@ -85,11 +77,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductResponse update(ProductRequest request) {
-
-        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(request);
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations.iterator().next().getMessage(), null);
-        }
+        validatorService.validate(request);
 
         Product product = productRepository.findFirstById(request.getId())
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
@@ -99,6 +87,18 @@ public class ProductServiceImpl implements ProductService {
         product.setStock(request.getStock());
         productRepository.save(product);
 
+        return toProductResponse(product);
+    }
+
+    @Override
+    public ProductResponse updateStock(ProductRequest request) {
+        validatorService.validate(request);
+
+        Product product = productRepository.findById(request.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        product.setStock(request.getStock());
+        productRepository.save(product);
         return toProductResponse(product);
     }
 

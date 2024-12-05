@@ -1,7 +1,6 @@
 package com.enigmacamp.shopify.service.impl;
 
 import com.enigmacamp.shopify.entity.Customer;
-import com.enigmacamp.shopify.exception.ValidationException;
 import com.enigmacamp.shopify.model.customer.CustomerRequest;
 import com.enigmacamp.shopify.model.customer.CustomerResponse;
 import com.enigmacamp.shopify.model.customer.UpdateCustomerRequest;
@@ -9,8 +8,6 @@ import com.enigmacamp.shopify.repository.CustomerRepository;
 import com.enigmacamp.shopify.service.CustomerService;
 import com.enigmacamp.shopify.utils.CustomerSpecification;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -20,13 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    private final Validator validator;
+    private final ValidatorService validatorService;
     private final CustomerRepository customerRepository;
 
     @Override
@@ -42,10 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerResponse createCustomer(CustomerRequest request) {
-        Set<ConstraintViolation<CustomerRequest>> violations = validator.validate(request);
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations.iterator().next().getMessage(), null);
-        }
+        validatorService.validate(request);
 
         if (customerRepository.existsByName(request.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
@@ -74,10 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerResponse updateCustomer(UpdateCustomerRequest request) {
-        Set<ConstraintViolation<UpdateCustomerRequest>> violations = validator.validate(request);
-        if (!violations.isEmpty()) {
-            throw new ValidationException(violations.iterator().next().getMessage(), null);
-        }
+        validatorService.validate(request);
 
         Customer customer = customerRepository.findFirstById(request.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
@@ -91,6 +81,14 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPhone(request.getPhone());
         customer.setAddress(request.getAddress());
         customerRepository.save(customer);
+
+        return toCustomerResponse(customer);
+    }
+
+    @Override
+    public CustomerResponse getCustomerById(String id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
 
         return toCustomerResponse(customer);
     }
