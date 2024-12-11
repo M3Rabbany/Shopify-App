@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
                 version = "1.0",
                 description = "Shopify App API",
                 contact = @Contact(
-                        name = "Enigma Cam  p",
+                        name = "Enigma Camp",
                         url = "https://enigmacamp.com"
                 )
         )

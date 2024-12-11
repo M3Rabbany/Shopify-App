@@ -1,5 +1,6 @@
 package com.enigmacamp.shopify.model.user;
 
+import com.enigmacamp.shopify.constant.UserRole;
 import com.enigmacamp.shopify.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterResponse {
-
+@Builder
+public class LoginResponse {
     private String username;
-    private String roles;
+    private String token;
+    private List<Role> roles;
 }

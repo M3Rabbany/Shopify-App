@@ -1,5 +1,6 @@
 package com.enigmacamp.shopify.controller;
 
+import com.enigmacamp.shopify.exception.ForbiddenException;
 import com.enigmacamp.shopify.exception.ResourceNotFoundException;
 import com.enigmacamp.shopify.exception.ValidationException;
 import com.enigmacamp.shopify.model.CommonResponse;
@@ -25,7 +26,7 @@ public class GlobalExceptionController {
                 .body(response);
     }
 
-    @ExceptionHandler(com.enigmacamp.shopify.exception.ValidationException.class)
+    @ExceptionHandler(ValidationException.class)
     public ResponseEntity<CommonResponse<String>>
     handleValidationException(ValidationException ex) {
         CommonResponse<String> response =
@@ -37,6 +38,17 @@ public class GlobalExceptionController {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .body(response);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CommonResponse<String>> handleForbiddenException(ForbiddenException e){
+            CommonResponse<String> response = CommonResponse.<String>builder()
+                    .statusCode(HttpStatus.FORBIDDEN.value())
+                    .message(e.getMessage())
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(response);
     }
 }
 

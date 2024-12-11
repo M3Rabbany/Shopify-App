@@ -3,6 +3,7 @@ package com.enigmacamp.shopify.entity;
 import com.enigmacamp.shopify.constant.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(name = "m_role")
 public class Role {
 
@@ -18,5 +20,5 @@ public class Role {
     private String id;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole roles;
 }

@@ -2,6 +2,9 @@ package com.enigmacamp.shopify.controller;
 
 import com.enigmacamp.shopify.model.CommonResponse;
 import com.enigmacamp.shopify.model.customer.CustomerRequest;
+import com.enigmacamp.shopify.model.user.AuthRequest;
+import com.enigmacamp.shopify.model.user.LoginResponse;
+import com.enigmacamp.shopify.model.user.RegisterRequest;
 import com.enigmacamp.shopify.model.user.RegisterResponse;
 import com.enigmacamp.shopify.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/register/customer")
-    public ResponseEntity<CommonResponse<RegisterResponse>> register(@RequestBody CustomerRequest request) {
-        RegisterResponse response = authService.registerCustomer(request);
+    @PostMapping("/register")
+    public ResponseEntity<CommonResponse<RegisterResponse>> register(@RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
 
         CommonResponse<RegisterResponse> commonResponse = CommonResponse.<RegisterResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
@@ -30,6 +33,21 @@ public class AuthController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(commonResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<CommonResponse<LoginResponse>> login(@RequestBody AuthRequest request) {
+        LoginResponse response = authService.login(request);
+
+        CommonResponse<LoginResponse> commonResponse = CommonResponse.<LoginResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Successfuly login")
+                .data(response)
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(commonResponse);
     }
 }

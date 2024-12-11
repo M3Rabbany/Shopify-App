@@ -1,8 +1,12 @@
 package com.enigmacamp.shopify.service;
 
 import com.enigmacamp.shopify.model.customer.CustomerRequest;
+import com.enigmacamp.shopify.model.user.AuthRequest;
+import com.enigmacamp.shopify.model.user.LoginResponse;
+import com.enigmacamp.shopify.model.user.RegisterRequest;
 import com.enigmacamp.shopify.model.user.RegisterResponse;
 
 public interface AuthService {
-    RegisterResponse registerCustomer(CustomerRequest request);
+    RegisterResponse register(RegisterRequest request);
+    LoginResponse login(AuthRequest request);
 }
