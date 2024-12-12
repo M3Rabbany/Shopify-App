@@ -40,30 +40,28 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse createCustomer(Customer customer) {
         validatorService.validate(customer);
 
-        Customer customerSaved = customerRepository.saveAndFlush(customer);
+                if (customerRepository.existsByName(customer.getName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
+        }
 
-        return toCustomerResponse(customerSaved);
-//        if (customerRepository.existsByName(request.getName())) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
-//        }
-//
-//        if (customerRepository.existsByEmail(request.getEmail())) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-//        }
-//
-//        if (customerRepository.existsByPhone(request.getPhone())) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone already exists");
-//        }
-//
-//        Customer customer = new Customer();
-//        customer.setId(UUID.randomUUID().toString());
-//        customer.setName(request.getName());
-//        customer.setEmail(request.getEmail());
-//        customer.setPhone(request.getPhone());
-//        customer.setAddress(request.getAddress());
-//        customer.setCreateAt(Date.from(Instant.now()));
-//        customerRepository.save(customer);
+        if (customerRepository.existsByEmail(customer.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
 
+        if (customerRepository.existsByPhone(customer.getPhone())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone already exists");
+        }
+
+        Customer saveCustomer = new Customer();
+        customer.setId(UUID.randomUUID().toString());
+        customer.setName(customer.getName());
+        customer.setEmail(customer.getEmail());
+        customer.setPhone(customer.getPhone());
+        customer.setAddress(customer.getAddress());
+        customer.setCreateAt(Date.from(Instant.now()));
+        customerRepository.save(saveCustomer);
+
+        return toCustomerResponse(saveCustomer);
     }
 
     @Override

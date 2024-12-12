@@ -16,6 +16,7 @@ import com.enigmacamp.shopify.service.AuthService;
 import com.enigmacamp.shopify.service.CustomerService;
 import com.enigmacamp.shopify.service.JwtService;
 import com.enigmacamp.shopify.service.UserService;
+import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -106,10 +109,15 @@ public class AuthServiceImpl implements AuthService {
         // Generate Token
         UserAccount user = (UserAccount) authentication.getPrincipal();
         String token = jwtService.generateToken(user);
+
+        List<String> roles = user.getRole().stream()
+                .map(role -> role.getRoles().name())
+                .toList();
+
         return LoginResponse.builder()
                 .username(request.getUsername())
                 .token(token)
-                .roles(user.getRole())
+                .roles(roles)
                 .build();
     }
 }

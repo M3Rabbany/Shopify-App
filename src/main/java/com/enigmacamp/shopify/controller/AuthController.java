@@ -1,12 +1,9 @@
 package com.enigmacamp.shopify.controller;
 
-import com.enigmacamp.shopify.constant.UserRole;
-import com.enigmacamp.shopify.exception.ForbiddenException;
 import com.enigmacamp.shopify.model.CommonResponse;
 import com.enigmacamp.shopify.model.customer.CustomerRequest;
 import com.enigmacamp.shopify.model.user.AuthRequest;
 import com.enigmacamp.shopify.model.user.LoginResponse;
-import com.enigmacamp.shopify.model.user.RegisterRequest;
 import com.enigmacamp.shopify.model.user.RegisterResponse;
 import com.enigmacamp.shopify.service.AuthService;
 import lombok.RequiredArgsConstructor;

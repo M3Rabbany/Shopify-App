@@ -54,12 +54,12 @@ public class JwtServiceImpl implements JwtService {
     public JwtClaims getJwtClaims(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256("IBNURABBANI");
-            DecodedJWT decodedJWT = JWT.require(algorithm).withIssuer("SHOPIFY APP").build().verify(token);
-            List<String> role = decodedJWT.getClaim("role").asList(String.class);
+            JWTVerifier jwtVerifier = JWT.require(algorithm).withIssuer("SHOPIFY APP").build();
+            DecodedJWT decodedJWT = jwtVerifier.verify(parseJwt(token));
 
             return JwtClaims.builder()
-                    .roles(role)
                     .userAccountId(decodedJWT.getSubject())
+                    .roles(decodedJWT.getClaim("role").asList(String.class))
                     .build();
         }catch (JWTVerificationException e){
             throw new ResponseStatusException((HttpStatus.UNAUTHORIZED),"Invalid JWT Token" + e);
