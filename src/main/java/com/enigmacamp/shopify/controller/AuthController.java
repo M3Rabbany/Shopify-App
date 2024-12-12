@@ -1,5 +1,7 @@
 package com.enigmacamp.shopify.controller;
 
+import com.enigmacamp.shopify.constant.UserRole;
+import com.enigmacamp.shopify.exception.ForbiddenException;
 import com.enigmacamp.shopify.model.CommonResponse;
 import com.enigmacamp.shopify.model.customer.CustomerRequest;
 import com.enigmacamp.shopify.model.user.AuthRequest;
@@ -22,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<CommonResponse<RegisterResponse>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<CommonResponse<RegisterResponse>> register(@RequestBody CustomerRequest request) {
         RegisterResponse response = authService.register(request);
 
         CommonResponse<RegisterResponse> commonResponse = CommonResponse.<RegisterResponse>builder()
@@ -42,7 +44,7 @@ public class AuthController {
 
         CommonResponse<LoginResponse> commonResponse = CommonResponse.<LoginResponse>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Successfuly login")
+                .message("Successfully login")
                 .data(response)
                 .build();
 

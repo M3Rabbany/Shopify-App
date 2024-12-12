@@ -1,9 +1,14 @@
 package com.enigmacamp.shopify.security;
 
+import com.enigmacamp.shopify.entity.UserAccount;
+import com.enigmacamp.shopify.model.user.JwtClaims;
+import com.enigmacamp.shopify.service.JwtService;
+import com.enigmacamp.shopify.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -12,21 +17,26 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
+    private final JwtService jwtService;
+    private final UserService userService;
+
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-
-        System.out.println("Security filter check: " + request.getHeader("Authorization"));
-
-        if (request.getHeader("Authorization") != null){
+        String bearerToken = request.getHeader("Autorization");
+        if (bearerToken != null && jwtService.verifyJwtToken(bearerToken)){
+            JwtClaims jwtClaims = jwtService.getJwtClaims(bearerToken);
+            UserAccount userAccount = userService.loadUserById(jwtClaims.getUserAccountId());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    request.getHeader("Authorization"),
+                    userAccount.getUsername(),
                     null,
-                    null
+                    userAccount.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

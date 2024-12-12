@@ -37,31 +37,33 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerResponse createCustomer(CustomerRequest request) {
-        validatorService.validate(request);
+    public CustomerResponse createCustomer(Customer customer) {
+        validatorService.validate(customer);
 
-        if (customerRepository.existsByName(request.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
-        }
+        Customer customerSaved = customerRepository.saveAndFlush(customer);
 
-        if (customerRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-        }
+        return toCustomerResponse(customerSaved);
+//        if (customerRepository.existsByName(request.getName())) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
+//        }
+//
+//        if (customerRepository.existsByEmail(request.getEmail())) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+//        }
+//
+//        if (customerRepository.existsByPhone(request.getPhone())) {
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone already exists");
+//        }
+//
+//        Customer customer = new Customer();
+//        customer.setId(UUID.randomUUID().toString());
+//        customer.setName(request.getName());
+//        customer.setEmail(request.getEmail());
+//        customer.setPhone(request.getPhone());
+//        customer.setAddress(request.getAddress());
+//        customer.setCreateAt(Date.from(Instant.now()));
+//        customerRepository.save(customer);
 
-        if (customerRepository.existsByPhone(request.getPhone())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone already exists");
-        }
-
-        Customer customer = new Customer();
-        customer.setId(UUID.randomUUID().toString());
-        customer.setName(request.getName());
-        customer.setEmail(request.getEmail());
-        customer.setPhone(request.getPhone());
-        customer.setAddress(request.getAddress());
-        customer.setCreateAt(Date.from(Instant.now()));
-        customerRepository.save(customer);
-
-        return toCustomerResponse(customer);
     }
 
     @Override

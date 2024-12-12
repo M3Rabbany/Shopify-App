@@ -27,13 +27,13 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse<CustomerResponse>> createCustomer(@RequestBody CustomerRequest request) {
-        CustomerResponse customer = customerService.createCustomer(request);
+    public ResponseEntity<CommonResponse<CustomerResponse>> createCustomer(@RequestBody Customer customer) {
+        CustomerResponse customerResponse = customerService.createCustomer(customer);
 
         CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message("Customer created")
-                .data(customer)
+                .data(customerResponse)
                 .build();
 
         return ResponseEntity

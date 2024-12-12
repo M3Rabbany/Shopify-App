@@ -1,7 +1,9 @@
 package com.enigmacamp.shopify.model.customer;
 
+import com.enigmacamp.shopify.constant.UserRole;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,4 +31,7 @@ public class CustomerRequest {
     private String phone;
 
     private String address;
+
+    @Pattern(regexp = "ADMIN|SELLER|CUSTOMER|SUPER_ADMIN", message = "Invalid role provided")
+    private String role;
 }
