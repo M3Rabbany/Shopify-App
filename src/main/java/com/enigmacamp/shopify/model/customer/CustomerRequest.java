@@ -1,6 +1,5 @@
 package com.enigmacamp.shopify.model.customer;
 
-import com.enigmacamp.shopify.constant.UserRole;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Pattern;

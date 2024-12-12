@@ -2,13 +2,11 @@ package com.enigmacamp.shopify.controller;
 
 import com.enigmacamp.shopify.entity.Transaction;
 import com.enigmacamp.shopify.model.CommonResponse;
-import com.enigmacamp.shopify.model.payment.PaymentRequest;
 import com.enigmacamp.shopify.model.payment.PaymentResponse;
 import com.enigmacamp.shopify.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,6 @@
 package com.enigmacamp.shopify.service.impl;
 
 import com.enigmacamp.shopify.entity.Customer;
-import com.enigmacamp.shopify.model.customer.CustomerRequest;
 import com.enigmacamp.shopify.model.customer.CustomerResponse;
 import com.enigmacamp.shopify.model.customer.UpdateCustomerRequest;
 import com.enigmacamp.shopify.repository.CustomerRepository;
@@ -14,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,28 +36,8 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse createCustomer(Customer customer) {
         validatorService.validate(customer);
 
-                if (customerRepository.existsByName(customer.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists");
-        }
-
-        if (customerRepository.existsByEmail(customer.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-        }
-
-        if (customerRepository.existsByPhone(customer.getPhone())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone already exists");
-        }
-
-        Customer saveCustomer = new Customer();
-        customer.setId(UUID.randomUUID().toString());
-        customer.setName(customer.getName());
-        customer.setEmail(customer.getEmail());
-        customer.setPhone(customer.getPhone());
-        customer.setAddress(customer.getAddress());
-        customer.setCreateAt(Date.from(Instant.now()));
-        customerRepository.save(saveCustomer);
-
-        return toCustomerResponse(saveCustomer);
+        Customer customerSaved = customerRepository.saveAndFlush(customer);
+        return toCustomerResponse(customerSaved);
     }
 
     @Override

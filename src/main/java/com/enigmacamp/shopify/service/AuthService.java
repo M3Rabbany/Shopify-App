@@ -5,7 +5,7 @@ import com.enigmacamp.shopify.model.user.AuthRequest;
 import com.enigmacamp.shopify.model.user.LoginResponse;
 import com.enigmacamp.shopify.model.user.RegisterResponse;
 
-public interface AuthService {
+public interface    AuthService {
     RegisterResponse register(CustomerRequest request);
     LoginResponse login(AuthRequest request);
 }

@@ -1,6 +1,5 @@
 package com.enigmacamp.shopify.model.user;
 
-import com.enigmacamp.shopify.constant.UserRole;
 import com.enigmacamp.shopify.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +15,5 @@ import java.util.List;
 public class LoginResponse {
     private String username;
     private String token;
-    private List<String> roles;
+    private List<Role> roles;
 }

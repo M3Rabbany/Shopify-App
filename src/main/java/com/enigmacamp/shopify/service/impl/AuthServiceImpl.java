@@ -11,15 +11,15 @@ import com.enigmacamp.shopify.model.user.AuthRequest;
 import com.enigmacamp.shopify.model.user.LoginResponse;
 import com.enigmacamp.shopify.model.user.RegisterResponse;
 import com.enigmacamp.shopify.repository.RoleRepository;
-import com.enigmacamp.shopify.repository.UserRepository;
 import com.enigmacamp.shopify.service.AuthService;
 import com.enigmacamp.shopify.service.CustomerService;
 import com.enigmacamp.shopify.service.JwtService;
 import com.enigmacamp.shopify.service.UserService;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,11 +31,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final CustomerService customerService;
@@ -44,7 +44,6 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -58,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         Role role = Role.builder()
-                .roles(userRole)
+                .role(userRole)
                 .build();
         roleRepository.save(role);
 
@@ -68,10 +67,6 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Collections.singletonList(role))
                 .build();
-
-        if (userRepository.existsByUsername(request.getUsername())){
-            throw new ForbiddenException("Username already exists!");
-        }
 
         account = userService.create(account);
 
@@ -87,6 +82,8 @@ public class AuthServiceImpl implements AuthService {
 
         customerService.createCustomer(customer);
 
+        log.info("Email : {}",request.getEmail());
+
         return RegisterResponse.builder()
                 .username(request.getUsername())
                 .roles(request.getRole())
@@ -95,30 +92,30 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(AuthRequest request) {
-        // Authenticate user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
 
-        // Set authentication to context
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
 
-        // Generate Token
-        UserAccount user = (UserAccount) authentication.getPrincipal();
-        String token = jwtService.generateToken(user);
+            // Set authentication to context
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        List<String> roles = user.getRole().stream()
-                .map(role -> role.getRoles().name())
-                .toList();
+            // Generate Token
+            UserAccount user = (UserAccount) authentication.getPrincipal();
+            String token = jwtService.generateToken(user);
 
-        return LoginResponse.builder()
-                .username(request.getUsername())
-                .token(token)
-                .roles(roles)
-                .build();
+            return LoginResponse.builder()
+                    .username(request.getUsername())
+                    .token(token)
+                    .roles(user.getRole())
+                    .build();
+        }catch (BadCredentialsException e){
+         throw new ForbiddenException("Invalid username or password");
+        }
     }
 }
 

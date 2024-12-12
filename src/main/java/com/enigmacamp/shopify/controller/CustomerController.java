@@ -2,12 +2,10 @@ package com.enigmacamp.shopify.controller;
 
 import com.enigmacamp.shopify.entity.Customer;
 import com.enigmacamp.shopify.model.CommonResponse;
-import com.enigmacamp.shopify.model.customer.CustomerRequest;
 import com.enigmacamp.shopify.model.customer.CustomerResponse;
 import com.enigmacamp.shopify.model.customer.UpdateCustomerRequest;
 import com.enigmacamp.shopify.service.impl.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

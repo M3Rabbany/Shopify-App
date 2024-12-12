@@ -20,5 +20,5 @@ public class Role {
     private String id;
 
     @Enumerated(EnumType.STRING)
-    private UserRole roles;
+    private UserRole role;
 }
