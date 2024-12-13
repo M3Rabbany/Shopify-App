@@ -6,9 +6,13 @@ import com.enigmacamp.shopify.model.product.ProductResponse;
 import com.enigmacamp.shopify.repository.ProductRepository;
 import com.enigmacamp.shopify.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
