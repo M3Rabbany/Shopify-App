@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentRequest {
     private String transactionId;
-    private Customer customer;
+    private String customerId;
 }

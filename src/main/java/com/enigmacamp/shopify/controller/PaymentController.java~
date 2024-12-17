@@ -2,7 +2,6 @@ package com.enigmacamp.shopify.controller;
 
 import com.enigmacamp.shopify.entity.Transaction;
 import com.enigmacamp.shopify.model.CommonResponse;
-import com.enigmacamp.shopify.model.payment.PaymentRequest;
 import com.enigmacamp.shopify.model.payment.PaymentResponse;
 import com.enigmacamp.shopify.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,8 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<PaymentResponse>> createPayment(@RequestBody PaymentRequest request) {
-        PaymentResponse paymentResponse = paymentService.createPayment(request);
+    public ResponseEntity<CommonResponse<PaymentResponse>> createPayment(@RequestBody Transaction transaction) {
+        PaymentResponse paymentResponse = paymentService.createPayment(transaction);
 
         CommonResponse<PaymentResponse> response = CommonResponse.<PaymentResponse>builder()
                 .data(paymentResponse)

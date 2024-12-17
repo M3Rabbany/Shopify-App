@@ -18,7 +18,7 @@ public class Payment {
     private String id;
 
     @Column(name = "redirect_url", nullable = false)
-    @Value("${URL_MIDTRANS}")
+    @Value("${midtrans.url}")
     private String redirectUrl;
 
     @Column(nullable = false)

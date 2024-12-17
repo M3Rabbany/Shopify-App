@@ -1,6 +1,5 @@
 package com.enigmacamp.shopify.service.impl;
 
-import com.enigmacamp.shopify.entity.Transaction;
 import com.enigmacamp.shopify.model.payment.PaymentRequest;
 import com.enigmacamp.shopify.model.payment.PaymentResponse;
 import com.enigmacamp.shopify.service.PaymentService;
@@ -21,16 +20,16 @@ import java.util.Base64;
 public class PaymentServiceImpl implements PaymentService {
     private final RestTemplate restTemplate;
 
-    @Value("${URL_MIDTRANS}")
+    @Value("${midtrans.url}")
     private String midtransUrl;
 
-    @Value("${SERVER_KEY}")
+    @Value("${midtrans.server.key}")
     private String serverKey;
 
     @Override
-    public PaymentResponse createPayment(Transaction transaction) {
+    public PaymentResponse createPayment(PaymentRequest request) {
 
-        PaymentRequest paymentRequest = createPaymentRequest(transaction);
+        PaymentRequest paymentRequest = createPaymentRequest(request);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -46,15 +45,15 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    private PaymentRequest createPaymentRequest(Transaction transaction) {
+    private PaymentRequest createPaymentRequest(PaymentRequest request) {
 
         PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setTransactionId(transaction.getId());
-        paymentRequest.setCustomer(transaction.getCustomer());
+        paymentRequest.setTransactionId(request.getTransactionId());
+        paymentRequest.setCustomerId(request.getCustomerId());
 
         return PaymentRequest.builder()
-                .customer(transaction.getCustomer())
-                .transactionId(transaction.getId())
+                .customerId(request.getCustomerId())
+                .transactionId(request.getTransactionId())
                 .build();
     }
 }
